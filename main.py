@@ -4,20 +4,23 @@ import random
 pg.init()
 
 win = pg.display.set_mode((501, 501))
-head_x = 251
-head_y = 251
-body_pos = []
+#first position is x second position is y
+body_pos = [[251, 251], [226, 251]]
 
-def setup():
-    pg.display.set_caption('Snake')
+def draw_board():
+    win.fill((0,0,0))
     for i in range(21):
         pg.draw.line(win, (128, 128, 128), (25*i,0), (25*i, 500), 1)
     
     for i in range(21):
         pg.draw.line(win, (128, 128, 128), (0,25*i), (500,25*i), 1)
 
-    make_food()
     draw_snake()
+
+def setup():
+    pg.display.set_caption('Snake')
+    draw_board() 
+    make_food()
 
 def make_food():
     x = random.randint(0, 20)*25 + 1
@@ -29,20 +32,17 @@ def make_food():
 
 
 def draw_snake():
-    pg.draw.rect(win, (0, 255, 0), (head_x, head_y, 24, 24))
     for i in body_pos:
         pg.draw.rect(win, (0, 255, 0), (i[0], i[1], 24, 24))
 
 def move_snake(direction):
     if direction == 'R':
-        if len(body_pos) > 1:
-            for i in range(len(body_pos)-1, -1, -1):
-                body_pos[i] = body_pos[i-1]
-        if len(body_pos) != 0:
-            body_pos[0] = [head_x, head_y] 
-        print(head_x)
-        head_x += 25
-       
+        for i in range(len(body_pos)-1, 0, -1):
+                body_pos[i][0] = body_pos[i-1][0]
+                body_pos[i][1] = body_pos[i-1][1]
+                print(body_pos)
+        body_pos[0][0] += 25
+        print(body_pos)
 
 
 def main():
@@ -62,13 +62,14 @@ def main():
         keys = pg.key.get_pressed()
 
         if keys[pg.K_LEFT]:
-            x -= vel
+            move_snake('L')
         if keys[pg.K_RIGHT]:
             move_snake('R')
         if keys[pg.K_DOWN]:
-            y += vel
+            move_snake('D')
         if keys[pg.K_UP]:
-            y -= vel
+            move_snake('U')
+        draw_board()
         pg.display.update()
 
 if __name__ == '__main__': main()
