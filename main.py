@@ -34,35 +34,28 @@ def draw_snake():
     for i in body_pos:
         pg.draw.rect(win, (0, 255, 0), (i[0], i[1], 24, 24))
 
-def move_snake(direction):
+def move_snake(direction, eat):
+    if eat:
+        body_pos.append([body_pos[len(body_pos)-1][0], body_pos[len(body_pos)-1][0]])
+    for i in range(len(body_pos)-1, 0, -1):
+        body_pos[i][0] = body_pos[i-1][0]
+        body_pos[i][1] = body_pos[i-1][1]
     if direction == 'R':
-        for i in range(len(body_pos)-1, 0, -1):
-                body_pos[i][0] = body_pos[i-1][0]
-                body_pos[i][1] = body_pos[i-1][1]
         body_pos[0][0] += 25
     if direction == 'L':
-        for i in range(len(body_pos)-1, 0, -1):
-                body_pos[i][0] = body_pos[i-1][0]
-                body_pos[i][1] = body_pos[i-1][1]
         body_pos[0][0] -= 25
     if direction == 'D':
-        for i in range(len(body_pos)-1, 0, -1):
-                body_pos[i][0] = body_pos[i-1][0]
-                body_pos[i][1] = body_pos[i-1][1]
         body_pos[0][1] += 25
     if direction == 'U':
-        for i in range(len(body_pos)-1, 0, -1):
-                body_pos[i][0] = body_pos[i-1][0]
-                body_pos[i][1] = body_pos[i-1][1]
         body_pos[0][1] -= 25
-
 
 def main():
     food_xy = setup()
     running = True
     directions = 'R'
+    eat = False
     while running:
-        pg.time.delay(100)
+        pg.time.delay(150)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -79,9 +72,11 @@ def main():
             directions = 'U'
         if body_pos[0][0] == food_xy[0] and body_pos[0][1] == food_xy[1]:
             food_xy = make_food()
-        move_snake(directions)
+            eat = True
+        move_snake(directions, eat)
         draw_board()
         draw_food(food_xy[0], food_xy[1])
         pg.display.update()
+        eat = False
 
 if __name__ == '__main__': main()
