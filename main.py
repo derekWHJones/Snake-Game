@@ -2,7 +2,7 @@ import pygame as pg
 import random
 
 pg.init()
-
+pg.display.set_caption('Snake')
 win = pg.display.set_mode((501, 501))
 #first position is x second position is y
 body_pos = [[251, 251]]
@@ -17,8 +17,24 @@ def draw_board():
 
     draw_snake()
 
+def is_dead():
+    dead = False
+    dead = check_walls() or check_body()
+    return dead
+
+def check_walls():
+    if body_pos[0][0] <= 0 or body_pos[0][0] >= 501 or body_pos[0][1] <= 0 or body_pos[0][1] >= 501:
+        return True
+    return False
+
+def check_body():
+    for i in range(1, len(body_pos)):
+        if body_pos[0][0] == body_pos[i][0] and body_pos[0][1] == body_pos[i][1]:
+            return True
+    return False
+
 def setup():
-    pg.display.set_caption('Snake')
+    body_pos = [[251, 251]]
     draw_board() 
     return make_food()
 
@@ -73,6 +89,8 @@ def main():
         if body_pos[0][0] == food_xy[0] and body_pos[0][1] == food_xy[1]:
             food_xy = make_food()
             eat = True
+        if is_dead():
+            setup()
         move_snake(directions, eat)
         draw_board()
         draw_food(food_xy[0], food_xy[1])
