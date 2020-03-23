@@ -6,7 +6,16 @@ pg.display.set_caption('Snake')
 win = pg.display.set_mode((501, 501))
 #first position is x second position is y
 body_pos = [[251, 251]]
+points = 0;
+font = pg.font.Font('freesansbold.ttf', 12)
+text = font.render(str(points), True, (255, 255, 255))
 
+def reset():
+    global points
+    for i in range(len(body_pos) - 1):
+        body_pos.pop()
+    body_pos[0] = [251, 251]
+    points = 0
 def draw_board():
     win.fill((0,0,0))
     for i in range(21):
@@ -34,7 +43,6 @@ def check_body():
     return False
 
 def setup():
-    body_pos = [[251, 251]]
     draw_board() 
     return make_food()
 
@@ -70,6 +78,7 @@ def main():
     running = True
     directions = 'R'
     eat = False
+    global points
     while running:
         pg.time.delay(150)
         for event in pg.event.get():
@@ -89,11 +98,19 @@ def main():
         if body_pos[0][0] == food_xy[0] and body_pos[0][1] == food_xy[1]:
             food_xy = make_food()
             eat = True
+            points += 50
         if is_dead():
-            setup()
+            reset()
+            food_xy = setup()
+            directions = 'R'
+
+        text = font.render(str(points), True, (255, 255, 255))
+        win.blit(text, (5, 5))
         move_snake(directions, eat)
         draw_board()
         draw_food(food_xy[0], food_xy[1])
+        text = font.render(str(points), True, (255, 255, 255))
+        win.blit(text, (5, 5))
         pg.display.update()
         eat = False
 
